@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 4.0)
+project(cppKurs)
+
+set(CMAKE_CXX_STANDARD 20)
+
+add_executable(cppKurs src/RunLists.cpp
+        src/List1.cpp
+        src/List2.cpp)

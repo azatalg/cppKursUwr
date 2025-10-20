@@ -1,4 +1,4 @@
-﻿#include "list.h"
+#include "list.h"
 #include <set>
 #include <chrono>
 #include <algorithm>
@@ -30,12 +30,12 @@ Sekwencje znaków:
         for (const auto& s : words)
             std::cout << s << '\n';
     }
-    
+
     void Ex_3() {
         using namespace std::literals;
         enum class Name : std::uint16_t {
-            Hatsume, Rei, Mikasa, Hinata,   
-            Levi, Itachi                  
+            Hatsume, Rei, Mikasa, Hinata,
+            Levi, Itachi
         };
         auto send_message = [](std::string_view msg, Name who) {
             std::string_view n{};
@@ -110,7 +110,7 @@ Sekwencje znaków:
         year_month_day ymd{ year{2025}, month{10}, day{8} };
 
         std::string_view mon;
-        switch (u32 m = u32(ymd.month()); m) { 
+        switch (u32 m = u32(ymd.month()); m) {
             case 1:  mon = "stycznia";     break;
             case 2:  mon = "lutego";       break;
             case 3:  mon = "marca";        break;
@@ -128,7 +128,7 @@ Sekwencje znaków:
 
         std::cout << u32(ymd.day()) << ' ' << mon << ' ' << i32(ymd.year()) << '\n';
     }
-    
+
     #pragma region Ex7
     class osoba {
         std::string nazwisko_;
@@ -159,7 +159,7 @@ Sekwencje znaków:
             {"Ackerman", "Mikasa",  1999}
         };
         std::sort(v.begin(), v.end());
-        for (const auto& x : v) 
+        for (const auto& x : v)
             std::cout << x << '\n';
     }
     #pragma endregion
@@ -191,7 +191,7 @@ Sekwencje znaków:
         vec<int> v{ 1,2,3,3,4,5,5,5,6,7,7,7,7,8,9 };
         i32 key = 7;
 
-        auto [beg, end] = equal_range_3way(v.begin(), v.end(), key); 
+        auto [beg, end] = equal_range_3way(v.begin(), v.end(), key);
 
         std::cout << "value=" << key
             << " count=" << std::distance(beg, end)

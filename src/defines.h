@@ -54,7 +54,7 @@ using fn = std::function<T>;
 #define REPEAT(n, macro) EVAL(REPEAT_INDIRECT()(n, macro))
 #define REPEAT_INDIRECT() REPEAT_
 #define REPEAT_(n, macro) \
-    IF(n)(OBSTRUCT(REPEAT_INDIRECT)()(DEC(n), macro) OBSTRUCT(macro)(n), )
+IF(n)(OBSTRUCT(REPEAT_INDIRECT)()(DEC(n), macro) OBSTRUCT(macro)(n), )
 
 // --- integer helpers ---
 #define IF(c) CAT(IF_, c)
