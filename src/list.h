@@ -51,7 +51,7 @@ public:
 
     void RunAll() {
         if (tasks.empty()) UNLIKELY {
-            std::cout << "Brak zada� w " << Name() << "\n";
+            std::cout << "Brak zadan w " << Name() << "\n";
             return;
         }
         std::cout << "== " << Name() << " ==\n";
