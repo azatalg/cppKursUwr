@@ -111,7 +111,7 @@ private:
     #pragma endregion
 
     #pragma region ex3
-    class llama : public std::enable_shared_from_this<llama> {
+    class llama {
     public:
         enum class sex { Male, Female, Unknown };
 

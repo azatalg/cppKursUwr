@@ -26,25 +26,18 @@ public:
 
 private:
     void Ex_1() {
-        std::cout<<sizeof(long long int)<< " bytes " << sizeof(long long int) * CHAR_BIT << "bits\n";
+        using nl = std::numeric_limits<long long int>;
+        std::cout<<nl::digits << endl;
         std::cout<<"according to the standard, at least 64 bit\n";
-        std::cout<<"["<<LLONG_MIN<<";"<<LLONG_MAX<<"] Basically (+/-2^63) - 1 \n";
-        std::cout<<ceil(log10(LLONG_MAX));
+        std::cout<<"["<<nl::min()<<";"<<nl::max()<<"] Basically (+/-2^63) - 1 \n";
+        std::cout<<nl::digits;
     }
 
     void Ex_2() {
-        std::cout << "sizeof(long double) = " << sizeof(long double)
-                  << " bytes (" << sizeof(long double) * CHAR_BIT << " bits)\n";
-
-        std::cout << "LDBL_MIN = " << LDBL_MIN << " (smallest positive normalized)\n";
-        std::cout << "LDBL_MAX = " << LDBL_MAX << " (largest finite)\n";
-        std::cout << "LDBL_EPSILON = " << LDBL_EPSILON
-                  << " (difference between 1 and next representable > 1)\n";
-
-        std::cout << "Infinity representable?  "
-                  << (std::isinf(HUGE_VALL) ? "yes" : "no") << "\n";
-
-        std::cout << "HUGE_VALL = " << HUGE_VALL << "\n";
+        using nl = std::numeric_limits<long double>;
+        std::cout << nl::min() << " " << nl::max()<<endl;
+        std::cout << nl::digits<<endl;
+        std::cout<<nl::has_infinity<<" "<<nl::epsilon();
     }
 
 
@@ -57,7 +50,7 @@ private:
         using H4 = Harmonic<4>::type;
         using H5 = Harmonic<5>::type;
         using H6 = Harmonic<6>::type;
-        using H20 = Harmonic<46>::type;
+        using H46 = Harmonic<46>::type;
         std::cout << "H1 = " << H1::num << "/" << H1::den << "\n";
         std::cout << "H2 = " << H2::num << "/" << H2::den << "\n";
         std::cout << "H3 = " << H3::num << "/" << H3::den << "\n";
@@ -65,8 +58,8 @@ private:
         std::cout << "H5 = " << H5::num << "/" << H5::den << "\n";
         std::cout << "H6 = " << H6::num << "/" << H6::den << "\n";
 
-        std::cout << "\nH20 (highest) = "
-                  << H20::num << "/" << H20::den << "\n";
+        std::cout << "\nH46 (highest) = "
+                  << H46::num << "/" << H46::den << "\n";
     }
 
     template<typename Src, typename Dest>
@@ -76,18 +69,20 @@ private:
         if constexpr (std::is_pointer_v<std::decay_t<Src>>) {
             if (src) {
                 if constexpr (std::is_convertible_v<SrcType, Dest>) {
-                    dest = *src;
+                    dest = std::move(*src);
                 } else {
-                    std::cerr << "Can't convert *src -> dest\n";
+                    //std::cerr << "Can't convert *src -> dest\n";
+                    throw std::runtime_error("Can't convert *src -> dest");
                 }
             } else {
-                std::cerr << "nullptr\n";
+                throw std::runtime_error("nullptr");
             }
         } else {
             if constexpr (std::is_convertible_v<Src, Dest>) {
-                dest = src;
+                dest = std::move(src);
             } else {
-                std::cerr << "Can't convert src -> dest\n";
+                //std::cerr << "Can't convert src -> dest\n";
+                throw std::runtime_error("Can't convert *src -> dest");
             }
         }
     }
@@ -103,10 +98,98 @@ private:
         std::cout<<a;
         std::string s = "doom";
         i32 x = 0;
-        transfer_value(s, x); // Error
+       // transfer_value(s, x); // Error
     }
+    class Matrix {
+    public:
+        int n, m;
+        vec<vec<f32>> data;
+        Matrix(i32 x, i32 y) : n(x), m(y) {
+            data = vec<vec<f32>> (x , vec<f32>());
+            for (auto& i: data) {
+                for (int j=0; j<y; j++)
+                i.push_back(RandomValue(0.9, 1.1));
+            }
+        }
 
+        static Matrix Zero(i32 rows, i32 cols) {
+            Matrix z(rows, cols);
+            for (i32 i = 0; i < rows; ++i)
+                std::fill(z.data[i].begin(), z.data[i].end(), 0.0f);
+            return z;
+        }
+
+        friend Matrix operator*(const Matrix& a, const Matrix& b) {
+            if (a.m != b.n) {
+                throw std::invalid_argument("Matrix::operator*: dimension mismatch");
+            }
+
+            Matrix c = Matrix::Zero(a.n, b.m);
+
+            for (i32 i = 0; i < a.n; ++i) {
+                const vec<f32>& Ai = a.data[i];
+                for (i32 k = 0; k < a.m; ++k) {
+                    const f32 aik = Ai[k];
+                    const vec<f32>& Bk = b.data[k];
+                    vec<f32>& Ci = c.data[i];
+                    for (i32 j = 0; j < b.m; ++j) {
+                        Ci[j] += aik * Bk[j];
+                    }
+                }
+            }
+            return c;
+        }
+
+        friend std::ostream& operator<<(std::ostream& out, const Matrix& a) {
+            for (auto& i: a.data) {
+                for (auto& j: i) {
+                    out << j << ' ';
+                }
+                out << endl;
+            }
+            return out;
+        }
+    };
     void Ex_5() {
+        using clock = std::chrono::high_resolution_clock;
+
+        struct Task { int n; int reps; };
+
+        vec<Task> tasks = {
+            {  50, 2000 },
+            { 100,  600 },
+            { 200,  100 },
+        };
+
+        std::cout << std::fixed << std::setprecision(12);
+
+        volatile f64 blackhole = 0.0; // to not have some optimizations
+
+        for (auto [sz, reps] : tasks) {
+            Matrix A(sz, sz);
+
+            auto t0 = clock::now();
+            for (int r = 0; r < reps; ++r) {
+                Matrix C = A * A;
+                blackhole += C.data[(r % sz)][(r * 7) % sz];
+            }
+            auto t1 = clock::now();
+
+            // Average time
+            auto total_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+            f64 avg_ms = (total_ns / 1e6) / static_cast<f64>(reps);
+            i32 avg_ms_int = static_cast<i32>(avg_ms + 0.5);
+
+            double minutes = avg_ms / (1000.0 * 60.0);
+
+            std::cout
+                << "N=" << sz << "  reps=" << reps
+                << "  avg: " << avg_ms_int << " ms"
+                << "  (" << minutes << " min)\n";
+        }
+
+        // to not optimize
+        if (blackhole < -1e300) std::cerr << blackhole << "\n";
 
     }
 

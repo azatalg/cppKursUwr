@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <vector>
 #include <functional>
+#include <random>
 // Asserts
 #define ASSERT(x) assert((x))
 #define CHECK(x) assert((x) != nullptr); (x)
@@ -94,3 +95,11 @@ IF(n)(OBSTRUCT(REPEAT_INDIRECT)()(DEC(n), macro) OBSTRUCT(macro)(n), )
 #define DEC_30 29
 #define DEC_31 30
 #define DEC_32 31
+
+inline f32 RandomValue(f32 min, f32 max) {
+    if (min > max) std::swap(min, max);
+    static thread_local std::mt19937 rng{ std::random_device{}() };
+
+    std::uniform_real_distribution<f32> dist(min, max);
+    return dist(rng);
+}
