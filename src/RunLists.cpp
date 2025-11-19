@@ -1,7 +1,7 @@
 #include "list.h"
-DECLARE_LIST(List3);
+DECLARE_LIST(List4);
 
 int main() {
-    auto& list = CreateList3();
+    auto& list = CreateList4();
     list.RunAll();
 }
