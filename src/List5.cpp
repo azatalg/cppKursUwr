@@ -19,7 +19,7 @@ private:
         std::deque<std::string> functions;
 
         auto tokens = LexSymbols(input, constants, variables, functions);
-
+        std::cout<<input<<'\n';
         for (const Symbol &tok: tokens) {
             std::cout << "[";
             std::cout << tok.text;

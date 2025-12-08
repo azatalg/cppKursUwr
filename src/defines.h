@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include <assert.h>
 #include <cstdint>
 #include <cstddef>
@@ -6,11 +7,9 @@
 #include <functional>
 #include <random>
 #include <iostream>
-#include <vector>
 #include <list>
 #include <set>
 #include <string>
-#include <functional>
 #include <numeric>
 #include <stdexcept>
 #include <utility>
@@ -19,6 +18,10 @@
 #include <cmath>
 #include <cfloat>
 #include <limits>
+#include <complex>
+#include <fstream>
+#include <iomanip>
+
 // Asserts
 #define ASSERT(x) assert((x))
 #define CHECK(x) assert((x) != nullptr); (x)
@@ -44,6 +47,8 @@ using u64 = uint64_t;
 
 using f32 = float;
 using f64 = double;
+
+using cf64 = std::complex<f64>;
 
 using usize = std::size_t;
 
