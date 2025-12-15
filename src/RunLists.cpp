@@ -1,7 +1,8 @@
 #include "list.h"
-DECLARE_LIST(List7);
+DECLARE_LIST(List8);
 
-int main() {
-    auto& list = CreateList7();
+i32 main(i32 argc, char** argv) {
+    auto& list = CreateList8();
+    list.InitArgs(argc, argv);
     list.RunAll();
 }

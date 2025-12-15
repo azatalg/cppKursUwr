@@ -42,8 +42,31 @@
 class ListBase {
 protected:
     vec<fn<void()>> tasks;
-
+    static inline vec<std::string> args;
 public:
+    static void InitArgs(int argc, char** argv) {
+        args.clear();
+        args.reserve((usize)argc);
+        for (int i = 0; i < argc; ++i) args.emplace_back(argv[i]);
+    }
+    NO_DISCARD std::string_view Arg(int i) const {
+        if (i < 0 || (usize)i >= args.size()) return {};
+        return args[(usize)i];
+    }
+
+    inline std::string ReadFile(const std::string& file) {
+        if (file.empty()) throw std::runtime_error("Brak argumentu z sciezka do pliku.");
+        std::ifstream in(file, std::ios::binary);
+        if (!in) throw std::runtime_error("Nie moge otworzyc pliku: " + file);
+
+        return std::string((std::istreambuf_iterator<char>(in)),
+                           std::istreambuf_iterator<char>());
+    }
+
+    std::string ReadFileFromArg(int argIndex) {
+        return ReadFile(std::string(Arg(argIndex)));
+    }
+
     virtual ~ListBase() = default;
     NO_DISCARD virtual std::string_view Name() const {
         return "Lista nie ma nazwy";
@@ -51,7 +74,7 @@ public:
 
     void RunAll() {
         if (tasks.empty()) UNLIKELY {
-            std::cout << "Brak zada� w " << Name() << "\n";
+            std::cout << "Brak zadan w " << Name() << "\n";
             return;
         }
         std::cout << "== " << Name() << " ==\n";
