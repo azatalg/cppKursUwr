@@ -20,7 +20,8 @@
 #include <complex>
 #include <fstream>
 #include <iomanip>
-
+#include <ranges>
+#include <filesystem>
 // Asserts
 #define ASSERT(x) assert((x))
 #define CHECK(x) assert((x) != nullptr); (x)

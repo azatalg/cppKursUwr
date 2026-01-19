@@ -12,4 +12,6 @@ add_executable(cppKurs src/RunLists.cpp
         src/list6.cpp
         src/List7.cpp
         src/List8.cpp
+        src/List9.cpp
+        src/List10.cpp
 )
